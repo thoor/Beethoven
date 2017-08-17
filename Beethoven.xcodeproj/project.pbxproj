@@ -339,7 +339,6 @@
 				D51575A71C343B77006F8E75 /* Frameworks */,
 				D51575A81C343B77006F8E75 /* Headers */,
 				D51575A91C343B77006F8E75 /* Resources */,
-				D5A49CE11C34591300427BF8 /* Copy frameworks with Carthage */,
 				D55C01F31DBD1BF400575260 /* SwiftLint */,
 			);
 			buildRules = (
@@ -448,21 +447,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Quick.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Nimble.framework",
-			);
-			name = "Copy frameworks with Carthage";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-		D5A49CE11C34591300427BF8 /* Copy frameworks with Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Pitchy.framework",
 			);
 			name = "Copy frameworks with Carthage";
 			outputPaths = (
