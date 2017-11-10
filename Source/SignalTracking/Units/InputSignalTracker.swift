@@ -42,11 +42,16 @@ class InputSignalTracker: SignalTracker {
     setupAudio()
   }
 
+  let setSessionCategory = false
+
   // MARK: - Tracking
 
   func start() throws {
-    try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
-    try session.overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
+    if setSessionCategory {
+      // We avoid setting session category here, we want to set it once and for all in our app delegate
+      try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+      try session.overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
+    }
 
     audioEngine = AVAudioEngine()
 
@@ -94,6 +99,12 @@ class InputSignalTracker: SignalTracker {
       let audioCaptureInput = try AVCaptureDeviceInput(device: audioDevice)
 
       captureSession.addInput(audioCaptureInput)
+
+      if !setSessionCategory {
+        // if we don't call this, the startSession will configure session for application
+        // and we will lose bluetooth playback (and more)
+        captureSession.automaticallyConfiguresApplicationAudioSession = false
+      }
 
       let audioOutput = AVCaptureAudioDataOutput()
       captureSession.addOutput(audioOutput)
