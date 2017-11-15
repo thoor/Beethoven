@@ -52,6 +52,10 @@ class InputSignalTracker: SignalTracker {
     }
 
     let format = inputNode.outputFormat(forBus: bus)
+    if format.sampleRate == 0.0 || format.channelCount == 0 {
+      // This should be checked like this, according to apple: https://developer.apple.com/documentation/avfoundation/avaudioengine/1386063-inputnode
+      throw InputSignalTrackerError.inputNodeMissing
+    }
 
     inputNode.installTap(onBus: bus, bufferSize: bufferSize, format: format) { buffer, time in
       guard let averageLevel = self.averageLevel else { return }
