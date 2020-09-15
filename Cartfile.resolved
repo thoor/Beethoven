@@ -1,4 +1,3 @@
-github "thoor/Nimble" "v7.0.2"
-github "thoor/Quick" "v1.2.0"
-github "thoor/Pitchy" "3.0.0"
-
+github "Quick/Nimble" "v8.1.2"
+github "Quick/Quick" "v3.0.0"
+github "thoor/Pitchy" "v3.0.1"

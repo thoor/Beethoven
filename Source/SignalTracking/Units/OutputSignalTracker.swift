@@ -36,7 +36,7 @@ final class OutputSignalTracker: SignalTracker {
 
   func start() throws {
     let session = AVAudioSession.sharedInstance()
-    try session.setCategory(AVAudioSessionCategoryPlayback)
+    try session.setCategory(AVAudioSession.Category(rawValue: convertFromAVAudioSessionCategory(AVAudioSession.Category.playback)))
 
     audioEngine = AVAudioEngine()
     audioPlayer = AVAudioPlayerNode()
@@ -66,4 +66,9 @@ final class OutputSignalTracker: SignalTracker {
     audioEngine = nil
     audioPlayer = nil
   }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
 }

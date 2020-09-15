@@ -9,19 +9,26 @@ final class FFTTransformer: Transformer {
     let inputCount = bufferSizePOT / 2
     let fftSetup = vDSP_create_fftsetup(log2n, Int32(kFFTRadix2))
 
-    var realp = [Float](repeating: 0, count: inputCount)
-    var imagp = [Float](repeating: 0, count: inputCount)
-    var output = DSPSplitComplex(realp: &realp, imagp: &imagp)
+    var realp = UnsafeMutableBufferPointer<Float>.allocate(capacity: inputCount)
+    var imagp = UnsafeMutableBufferPointer<Float>.allocate(capacity: inputCount)
+    defer {
+      realp.deallocate()
+      imagp.deallocate()
+    }
+    var output = DSPSplitComplex(realp: realp.baseAddress!, imagp: imagp.baseAddress!)
 
     let windowSize = bufferSizePOT
-    var transferBuffer = [Float](repeating: 0, count: windowSize)
-    var window = [Float](repeating: 0, count: windowSize)
+    var transferBuffer = UnsafeMutableBufferPointer<Float>.allocate(capacity: windowSize)
+    var window = UnsafeMutableBufferPointer<Float>.allocate(capacity: windowSize)
+    defer {
+      transferBuffer.deallocate()
+      window.deallocate()
+    }
+    vDSP_hann_window(window.baseAddress!, vDSP_Length(windowSize), Int32(vDSP_HANN_NORM))
+    vDSP_vmul((buffer.floatChannelData?.pointee)!, 1, window.baseAddress!,
+              1, transferBuffer.baseAddress!, 1, vDSP_Length(windowSize))
 
-    vDSP_hann_window(&window, vDSP_Length(windowSize), Int32(vDSP_HANN_NORM))
-    vDSP_vmul((buffer.floatChannelData?.pointee)!, 1, window,
-      1, &transferBuffer, 1, vDSP_Length(windowSize))
-
-    let temp = UnsafePointer<Float>(transferBuffer)
+    let temp = UnsafePointer<Float>(transferBuffer.baseAddress!)
 
     temp.withMemoryRebound(to: DSPComplex.self, capacity: transferBuffer.count) { (typeConvertedTransferBuffer) -> Void in
         vDSP_ctoz(typeConvertedTransferBuffer, 2, &output, 1, vDSP_Length(inputCount))
